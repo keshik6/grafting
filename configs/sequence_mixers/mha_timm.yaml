@@ -1,0 +1,3 @@
+dim: 1152 # Input dimension to DiT
+qkv_bias: True  
+num_heads: 16 # Number of heads. Defaults to 16

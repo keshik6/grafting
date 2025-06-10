@@ -1,0 +1,31 @@
+embed_dim: 1152 # Input dimension to DiT
+num_heads: 16 # Number of heads. Defaults to 1
+num_heads_kv: null
+cross_attn: False
+qkv_proj_bias: True # Maximum input sequence length. 
+out_proj_bias: True
+
+dropout: 0.0
+softmax_scale: null
+causal: False
+layer_idx: null
+dwconv: False
+
+# # Rotary embedding details
+rotary_emb_dim: 0
+rotary_emb_base: 10000.0
+rotary_emb_scale_base: null
+rotary_emb_interleaved: False
+
+# use_alibi: False
+window_size: 
+  - 4 
+  - 4
+fused_bias_fc: True
+use_flash_attn: True
+
+# # Other arguments
+return_residual: False
+checkpointing: False
+device: null
+dtype: null

@@ -1,0 +1,7 @@
+d_model: 1152 # Input dimension to DiT
+l_max: 1000000 # Maximum input sequence length. 
+order: 2 # Depth of the Hyena recurrence. Maps to number of projections in ViTs.
+inner_factor:  1 # Width multiplier. Defaults to 1
+num_heads: 1
+num_blocks: 1
+short_filter_order:  4 # Length of the explicit input convolutional filter. Defaults to 4

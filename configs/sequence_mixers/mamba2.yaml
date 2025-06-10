@@ -1,0 +1,5 @@
+d_model: 1152 # Model dimension d_model
+d_state: 64  # SSM state expansion factor, typically 64 or 128
+d_conv: 4    # Local convolution width
+expand: 2    # Block expansion factor
+headdim: 16

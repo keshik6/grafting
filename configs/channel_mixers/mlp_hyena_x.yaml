@@ -1,0 +1,9 @@
+d_model: 1152 # Model width
+l_max: 256 # Maximum input sequence length. 
+expansion_ratio: 2 # MLP
+order: 2 # Depth of the Hyena recurrence.
+inner_factor:  1 # Width multiplier. Defaults to 1
+num_heads: 1
+num_blocks: 1
+fused_bias_fc:  True # Whether to use fused bias FC. Defaults to False
+short_filter_order:  4 # Length of the explicit input convolutional filter. Defaults to 4

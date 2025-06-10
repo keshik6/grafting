@@ -1,0 +1,31 @@
+operator:
+  type: 'mha'
+  name: "hyena_y"
+  config_filepath: configs/sequence_mixers/hyena_y.yaml
+
+
+sample_config:
+  init_type: graft
+  global_seed: 100
+  dit_model_name: DiT-XL/2
+  grafted_dit_ckpt_path: ../grafted_models/dit-xl2-mha-hyena_y-50p-fid2.61_ablation/model.pt
+  samples_save_dir: results/dit-xl2-mha-hyena_y-50p-fid2.61_ablation
+  image_size: 256
+  graft_indexes:
+    - 1
+    - 3
+    - 5
+    - 7
+    - 9
+    - 11
+    - 13
+    - 15
+    - 17
+    - 19
+    - 21
+    - 23
+    - 25
+    - 27
+  graft_weights:
+
+
