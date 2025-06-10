@@ -26,6 +26,8 @@
 <a href="https://arxiv.org/abs/2506.05340" title="arXiv" target="_blank" rel="nofollow" style="text-decoration: none;">📄 arXiv</a>
 </p>
 
+![teaser_fig](https://github.com/user-attachments/assets/be81e026-877e-4c31-85e9-2cfbb81c9016)
+
 
 ## 📣 News
 
