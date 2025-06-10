@@ -1,0 +1,4 @@
+torch==2.5.1
+torchvision==0.20.1
+diffusers==0.33.1
+accelerate==1.7.0
