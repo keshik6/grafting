@@ -41,6 +41,34 @@ Designing model architectures requires decisions such as selecting operators (e.
 ## About this code
 The Grafting codebase is written in Pytorch and provides a simple implementation for grafting Diffusion Transformers (DiTs).
 
+## Grafted models
+We provide 22 grafted models for ImageNet-1K 256×256 generation.
+
+| Operator | Replacement Operator | Grafting Ratio | FID  | Download Link |
+|----------|----------------------|----------------|------|------|
+| MLP      | MLP (Self-grafting, r=4)              | 100%           | 2.54 | [Link](https://huggingface.co/grafting/dit-xl2-mlp-mlp_r_4-100p-fid2.54) |
+| MLP      | MLP (r=3)              | 50%            | 2.53 | [Link](https://huggingface.co/grafting/dit-xl2-mlp-mlp_r_3-50p-fid2.53) |
+| MLP      | MLP (r=3)              | 75%            | 2.61 | [Link](https://huggingface.co/grafting/dit-xl2-mlp-mlp_r_3-75p-fid2.61) |
+| MLP      | MLP (r=6)              | 50%            | 2.38 | [Link](https://huggingface.co/grafting/dit-xl2-mlp-mlp_r_6-50p-fid2.38) |
+| MLP      | MLP (r=6)              | 75%            | 2.37 | [Link](https://huggingface.co/grafting/dit-xl2-mlp-mlp_r_6-75p-fid2.37) |
+| MLP      | Hyena-X (r=2)              | 50%            | 2.64 | [Link](https://huggingface.co/grafting/dit-xl2-mlp-hyena_x-50p-fid2.64) |
+| MLP      | Hyena-X (r=2)            | 75%            | 3.26 | [Link](https://huggingface.co/grafting/dit-xl2-mlp-hyena_x-75p-fid3.26) |
+| MHA      | MHA (Self-grafting)                  | 100%           | 2.49 | [Link](https://huggingface.co/grafting/dit-xl2-mha-mha-100p-fid2.49) |
+| MHA      | Hyena-SE             | 50%            | 2.73 | [Link](https://huggingface.co/grafting/dit-xl2-mha-hyena_se-50p-fid2.73) |
+| MHA      | Hyena-SE             | 50%            | 2.61 | [Link](https://huggingface.co/grafting/dit-xl2-mha-hyena_se-50p-fid2.73) |
+| MHA      | Hyena-SE             | 75%            | 3.62 | [Link](https://huggingface.co/grafting/dit-xl2-mha-hyena_se-50p-fid2.61_ablation) |
+| MHA      | Hyena-X              | 50%            | 2.74 | [Link](https://huggingface.co/grafting/dit-xl2-mha-hyena_x-50p-fid2.74) |
+| MHA      | Hyena-X              | 50%            | 2.58 | [Link](https://huggingface.co/grafting/dit-xl2-mha-hyena_x-50p-fid2.58_ablation) |
+| MHA      | Hyena-X              | 75%            | 3.69 | [Link](https://huggingface.co/grafting/dit-xl2-mha-hyena_x-75p-fid3.69) |
+| MHA      | Hyena-Y              | 50%            | 2.72 | [Link](https://huggingface.co/grafting/dit-xl2-mha-hyena_y-50p-fid2.72) |
+| MHA      | Hyena-Y              | 50%            | 2.61 | [Link](https://huggingface.co/grafting/dit-xl2-mha-hyena_y-50p-fid2.61_ablation) |
+| MHA      | Hyena-Y              | 75%            | 3.66 | [Link](https://huggingface.co/grafting/dit-xl2-mha-hyena_y-75p-fid3.66) |
+| MHA      | SWA                  | 50%            | 2.67 | [Link](https://huggingface.co/grafting/dit-xl2-mha-swa-50p-fid2.67) |
+| MHA      | SWA                  | 50%            | 2.62 | [Link](https://huggingface.co/grafting/dit-xl2-mha-swa-50p-fid2.62_ablation) |
+| MHA      | SWA                  | 75%            | 3.09 | [Link](https://huggingface.co/grafting/dit-xl2-mha-swa-75p-fid3.09) |
+| MHA      | Mamba-2              | 50%            | 2.65 | [Link](https://huggingface.co/grafting/dit-xl2-mha-mamba_2-50p-fid2.65) |
+| MHA      | Mamba-2              | 75%            | 3.02 | [Link](https://huggingface.co/grafting/dit-xl2-mha-mamba_2-75p-fid3.02) |
+
 ## Getting Started
 Start generating samples using our grafted models (See `demo_notebooks/grafting_demo.ipynb`)
 
