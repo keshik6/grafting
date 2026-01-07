@@ -110,6 +110,7 @@ This guide describes the complete training pipeline for grafting on the ImageNet
   `bash bash_scripts/dit_imagenet_1k_256x256/generate_dataset_hash.sh`
 
 ⚡Recommended 1× H100
+
 ---
 
 #### 1.3 Extract DiT Block Activations (for Activation Distillation)
@@ -146,6 +147,7 @@ This guide describes the complete training pipeline for grafting on the ImageNet
   `bash bash_scripts/dit_imagenet_1k_256x256/sample_stage1.sh`
 
 ⚡Recommended 1× H100 (You can run this in parallel for different layers)
+
 ---
 
 ### 3) Grafting Stage 2: Lightweight Fine-Tuning
@@ -156,6 +158,7 @@ This guide describes the complete training pipeline for grafting on the ImageNet
 - Stage-1 trained operator checkpoints are saved under: `./results/`
 
 ⚡Recommended 8× H100
+
 ---
 
 ### 4) Sampling & FID Evaluation
