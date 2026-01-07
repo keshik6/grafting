@@ -80,10 +80,10 @@ Start generating samples using our grafted models (See `demo_notebooks/grafting_
 ##  Training Pipeline for Grafting Diffusion Transformers
 
 This guide describes the complete training pipeline for grafting on the ImageNet-1K dataset. The pipeline is modular and can be adapted to different operators, layers and resolutions as needed. All the results reported in the paper can be reproduced using this codebase. All experiments are specified via YAML config files. We provide Dockerfiles. **For reference, we provide a step-by-step demo for replacing 3 Multi-Head Attention (MHA) operators in DiT-XL/2 with Hyena-Y operator**:
-1. **Data preparation & feature extraction**
-2. **Stage 1: Activation distillation**
-3. **Stage 2: Lightweight fine-tuning**
-4. **Sampling + FID evaluation**
+1. Data preparation & feature extraction
+2. Stage 1: Activation distillation
+3. Stage 2: Lightweight fine-tuning
+4. Sampling + FID evaluation
 
 ---
 
