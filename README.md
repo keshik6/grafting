@@ -111,6 +111,8 @@ This guide describes the complete training pipeline for grafting on the ImageNet
 
 ⚡Recommended 1× H100
 
+**Note:** Extracted SD-VAE features for ImageNet-1K dataset can be downloaded from Hugging Face: [sd_vae_features_imagenet_1k_256x256](https://huggingface.co/datasets/grafting/sd_vae_features_imagenet_1k_256x256).
+
 ---
 
 #### 1.3 Extract DiT Block Activations (for Activation Distillation)
