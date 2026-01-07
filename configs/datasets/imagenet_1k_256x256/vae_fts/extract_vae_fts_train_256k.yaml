@@ -1,0 +1,15 @@
+tar_dir: /data/vae_features/imagenet_256/train/
+tar_str_indexes: split_{000000..000007}.tar
+num_workers: 8 # Do not change this.
+num_samples_per_class: 32
+num_samples: 256000  # This should be num_workers*num_samples_per_class*total_classes (which is 1000 for ImageNet-1K)
+batch_size: 512
+train_scions: False
+return_tuple_keys:
+- __key__
+- latent.pth
+- label.pth
+- class_name
+- human_readable_class_name
+- image_path
+# tar_str_indexes: split_000006.tar

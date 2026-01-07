@@ -1,0 +1,49 @@
+# Operator used for grafting
+operator:
+  name: "hyena_y"
+  config_filepath: configs/sequence_mixers/hyena_y.yaml
+
+
+train_config:
+  initial_learning_rate: 5e-4
+  min_learning_rate: 1.25e-6
+  wd: 0
+  epochs: 200
+  global_seed: 0
+  clip_norm_val: 10.0
+
+
+train:
+  tar_dir: /data/scion_fts_mha/train/
+  tar_str_indexes: split_{000..007}.tar
+  num_workers: 8 # 1 worker will handle 1 tar (Please pay attention to this.)
+  num_samples: 8000  # This should be num_workers*num_samples_per_class*total_classes (which is 1000 for ImageNet-1K)
+  batch_size: 8 #Effective batch size = num_workers * batch size 
+  # selected_image_paths_file: assets/imagenet/splits/8k_set_train_256_image_paths.pkl
+  train_subset: False
+  operator_type: mha # What to replace? Replace MHA with Hyena-Y
+  return_tuple_keys:
+  - __key__
+  - in_fts.pth
+  - out_fts.pth
+  - adaln_out_fts.pth
+  - t.pth
+  sha_key: None
+
+
+# This should be unchanged for all blocks.
+val:
+  tar_dir: /data/scion_fts_mha/val/
+  tar_str_indexes: split_{000..007}.tar
+  num_workers: 8 # 1 worker will handle 1 tar (Please pay attention to this.)
+  num_samples: 8000  # This should be num_workers*num_samples_per_class*total_classes (which is 1000 for ImageNet-1K)
+  batch_size: 64
+  train_subset: False
+  operator_type: mha
+  return_tuple_keys:
+  - __key__
+  - in_fts.pth
+  - out_fts.pth
+  - adaln_out_fts.pth
+  - t.pth
+  sha_key: None

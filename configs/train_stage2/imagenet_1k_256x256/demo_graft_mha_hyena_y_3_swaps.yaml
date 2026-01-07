@@ -1,0 +1,45 @@
+train:
+  tar_dir: /data/vae_features/imagenet_256/train/
+  tar_str_indexes: split_{000000..000007}.tar
+  num_workers: 8
+  num_samples_per_class: 16
+  num_samples: 128000  # This should be num_workers*num_samples_per_class*total_classes (which is 1000 for ImageNet-1K)
+  batch_size: 32 # Global batch size = batch_size * num_workers = 32*8 = 256
+  train_scions: True
+  selected_image_paths_file: assets/imagenet/splits/hash_key_128k_set_train_256_image_paths.pkl
+  return_tuple_keys:
+  - __key__
+  - latent.pth
+  - label.pth
+  # - class_name
+  # - human_readable_class_name
+  # - image_path
+  shuffle: True
+
+
+operator:
+  type: "mha"
+  name: "hyena_y"
+  config_filepath: configs/sequence_mixers/hyena_y.yaml
+
+
+train_config:
+  initial_learning_rate: 1e-4
+  init_type: graft
+  wd: 0
+  epochs: 40
+  #warmup_epochs: 100
+  # batch_size_per_gpu: 256  # This is what will be passed for each shard.
+  global_seed: 0
+  dit_model_name: DiT-XL/2
+  dit_ckpt_path: None
+  image_size: 256
+  graft_indexes:
+    - 6
+    - 16
+    - 27
+
+  graft_weights:
+    - 6: "./results/stage1/hyena_y/block_6/l1/scaled_pred=False/seed=6/checkpoints/best_train.pt"
+    - 16: "./results/stage1/hyena_y/block_16/l1/scaled_pred=False/seed=16/checkpoints/best_train.pt"
+    - 27: "./results/stage1/hyena_y/block_27/l1/scaled_pred=False/seed=27/checkpoints/best_train.pt"

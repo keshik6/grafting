@@ -8,9 +8,9 @@
     <a href="https://lea-m-hadzic.github.io" target="_blank">Lea&nbsp;M.&nbsp;Hadzic</a><sup>1</sup>,
     <a href="https://limanling.github.io" target="_blank">Manling&nbsp;Li</a><sup>1,5</sup>,
     <a href="https://web.stanford.edu/~agrim/" target="_blank">Agrim&nbsp;Gupta</a><sup>6</sup>,
-    <a href="https://jiajunwu.com"  target="_blank">Stefano&nbsp;Massaroli</a><sup>2</sup>,<br>
+    <a href="https://www.linkedin.com/in/stefano-massaroli-b49ba8130/"  target="_blank">Stefano&nbsp;Massaroli</a><sup>2,7</sup>,<br>
      <a href="http://azaliamirhoseini.com"  target="_blank">&nbsp;Azalia Mirhoseini</a><sup>1</sup>,
-    <a href="https://www.niebles.net"  target="_blank">&nbsp;Juan Carlos Niebles</a><sup>&dagger;1,7</sup>,
+    <a href="https://www.niebles.net"  target="_blank">&nbsp;Juan Carlos Niebles</a><sup>&dagger;1,8</sup>,
     <a href="https://cs.stanford.edu/~ermon/"  target="_blank">&nbsp;Stefano Ermon</a><sup>&dagger;1</sup>,
     <a href="https://profiles.stanford.edu/fei-fei-li"  target="_blank">&nbsp;Li Fei-Fei</a><sup>&dagger;1</sup><a><br/>
 <span class="author-block"><sup>1</sup>&nbsp;Stanford University&nbsp;&nbsp;</span>
@@ -19,18 +19,23 @@
 <span class="author-block"><sup>4</sup>&nbsp;UC San Diego&nbsp;&nbsp;</span><br/>
 <span class="author-block"><sup>5</sup>&nbsp;Northwestern University&nbsp;&nbsp;</span>
 <span class="author-block"><sup>6</sup>&nbsp;Google DeepMind&nbsp;&nbsp;</span>
-<span class="author-block"><sup>7</sup>&nbsp;Salesforce Research&nbsp;&nbsp;</span><br/>
+<span class="author-block"><sup>7</sup>&nbsp;RIKEN&nbsp;&nbsp;</span>
+<span class="author-block"><sup>8</sup>&nbsp;Salesforce Research&nbsp;&nbsp;</span><br/>
 <sup>*</sup>&nbsp;Equal contribution, <sup>&dagger;</sup>&nbsp;Equal senior authorship<br/>
+NeurIPS 2025 Oral<br/>
 <a href="https://grafting.stanford.edu" title="Website" target="_blank" rel="nofollow" style="text-decoration: none;">🌎Website</a> |
 <a href="https://huggingface.co/grafting/" title="Grafted Models" target="_blank" rel="nofollow" style="text-decoration: none;">🤗 Grafted Models</a> |
-<a href="https://arxiv.org/abs/2506.05340" title="arXiv" target="_blank" rel="nofollow" style="text-decoration: none;">📄 arXiv</a>
+<a href="https://arxiv.org/abs/2506.05340" title="arXiv" target="_blank" rel="nofollow" style="text-decoration: none;">📄 arXiv</a> |
+<a href="https://www.liquid.ai/research/exploring-diffusion-transformer-designs-via-grafting" title="Blog" target="_blank" rel="nofollow" style="text-decoration: none;">✍️ Blog</a>
 </p>
+
 
 ![teaser_fig](https://github.com/user-attachments/assets/be81e026-877e-4c31-85e9-2cfbb81c9016)
 
 
 ## 📣 News
 
+- **[2026-01-07]: Training/ Evaluation code released**
 - **[2025-06-10]: Grafting codebase released**
 
 
@@ -72,20 +77,130 @@ We provide 22 grafted models for ImageNet-1K 256×256 generation.
 ## Getting Started
 Start generating samples using our grafted models (See `demo_notebooks/grafting_demo.ipynb`)
 
+##  Training Pipeline for Grafting Diffusion Transformers
+
+This guide describes the complete training pipeline for grafting on the ImageNet-1K dataset. The pipeline is modular and can be adapted to different operators, layers and resolutions as needed. All the results reported in the paper can be reproduced using this codebase. All experiments are specified via YAML config files. We provide Dockerfiles. **For reference, we provide a step-by-step demo for replacing 3 Multi-Head Attention (MHA) operators in DiT-XL/2 with Hyena-Y operator**:
+1. **Data preparation & feature extraction**
+2. **Stage 1: Activation distillation**
+3. **Stage 2: Lightweight fine-tuning**
+4. **Sampling + FID evaluation**
+
+---
+
+### 1) Data Preparation & Feature Extraction
+
+#### 1.1 Setup Environment
+- Build Docker image: `docker build -t grafting .`
+- (Optional) Create a persistent cache volume for downloading Hugging Face models: `docker volume create huggingface_cache`
+
+- Run container (An example shown below):  
+  `docker run --gpus all --ipc=host --ulimit memlock=-1 --ulimit stack=67108864 -v ~/keshik/workspace/projects/grafting:/workspace -v huggingface_cache:/home/user/.cache/huggingface -v ~/keshik/data:/data -it grafting /bin/bash`
+
+---
+
+#### 1.2 Extract VAE Latents (Full ImageNet-1K)
+- Download ImageNet-1K dataset from [here](https://www.image-net.org/download.php). 
+
+- Extract SD-VAE features for the ImageNet-1K dataset at 256×256:  
+  `bash bash_scripts/imagenet_1k/extract_vae_fts.sh`
+
+- Expected output directory created: `/data/vae_features/imagenet_256/train/`
+
+- Generates a stratified 128k ImageNet-1K subset (10% used in the paper) and saves image paths + SHA hash so the exact subset can be used across different experiments. This can be increased up to the full ImageNet size if required.
+  `bash bash_scripts/dit_imagenet_1k_256x256/generate_dataset_hash.sh`
+
+⚡Recommended 1× H100
+---
+
+#### 1.3 Extract DiT Block Activations (for Activation Distillation)
+- Stage-1 requires intermediate DiT-XL/2 activations:
+  `bash bash_scripts/dit_imagenet_1k_256x256/extract_mha_scion_fts.sh`
+
+- Inside the script, users must manually set:
+
+  - `SPLIT=train` for the training set
+
+  - `SPLIT=val` for the validation set
+
+
+- This produces:
+
+  - `/data/scion_fts_mha/train/`
+
+  - `/data/scion_fts_mha/val/`
+
+
+⚡Recommended 1× H100
+
+---
+
+### 2) Grafting Stage 1: Activation Distillation
+
+- Train replacement attention/MLP operators by distilling the extracted activations:
+
+  `bash bash_scripts/dit_imagenet_1k_256x256/train_stage1.sh`
+
+- Stage-1 trained operator checkpoints are saved under: `./results/`
+
+- Optional post Stage-1 sampling:  
+  `bash bash_scripts/dit_imagenet_1k_256x256/sample_stage1.sh`
+
+⚡Recommended 1× H100 (You can run this in parallel for different layers)
+---
+
+### 3) Grafting Stage 2: Lightweight Fine-Tuning
+
+- Perform end-to-end fine-tuning after activation distillation:
+  `bash bash_scripts/dit_imagenet_1k_256x256/train_stage2.sh`
+
+- Stage-1 trained operator checkpoints are saved under: `./results/`
+
+⚡Recommended 8× H100
+---
+
+### 4) Sampling & FID Evaluation
+
+- Generate samples from the fine-tuned model and save as `.npz`:
+
+  `bash bash_scripts/dit_imagenet_1k_256x256/sample_stage2.sh`
+
+- Then compute FID using OpenAI’s reference batch.Frist, install dependencies using the official [`requirements.txt`](https://github.com/openai/guided-diffusion/blob/main/evaluations/requirements.txt), or use the Dockerfile at `assets/tf_Dockerfile/Dockerfile` for evaluation. Then run the following:
+
+  `cd ./external/guided_diffusion/evaluations/ && wget https://openaipublic.blob.core.windows.net/diffusion/jul-2021/ref_batches/imagenet/256/VIRTUAL_imagenet256_labeled.npz && python evaluator.py VIRTUAL_imagenet256_labeled.npz ./samples/demo/hyena_y_6_16_27.npz`
+
+⚡Recommended 8× H100
+
+---
+
+
 ## Contact
+
 - Keshigeyan Chandrasegaran: keshik@stanford.edu
 - Michael Poli: poli@stanford.edu
 
 For issues, feedback, or contributions, please open an issue or submit a pull request.
 
+## Acknowledgements
+
+We acknowledge the following works and libraries:
+
+- Scalable Diffusion Models with Transformers (DiT): https://github.com/facebookresearch/DiT
+- https://github.com/chuanyangjin/fast-DiT
+- Convolutions for Sequence Modeling: https://github.com/HazyResearch/safari
+- Mamba SSM architecture: https://github.com/state-spaces/mamba
+- Causal depthwise conv1d in CUDA, with a PyTorch interface: https://github.com/Dao-AILab/causal-conv1d
+- Experiment Tracking with Weights and Biases : https://www.wandb.com/
+
 ## Citation
 
 ```bibtex
-@article{chandrasegaran2024grafting,
+@article{chandrasegaran2025grafting,
       title={Exploring Diffusion Transformer Designs via Grafting},
       author={Chandrasegaran, Keshigeyan and Poli, Michael and Fu, Daniel Y. and Kim, Dongjun and 
       Hadzic, Lea M. and Li, Manling and Gupta, Agrim and Massaroli, Stefano and 
       Mirhoseini, Azalia and Niebles, Juan Carlos and Ermon, Stefano and Li, Fei-Fei},
+      booktitle = {Advances in Neural Information Processing Systems},
+      volume = {38}
       year={2025},
       url={https://arxiv.org/abs/2506.05340}, 
 }

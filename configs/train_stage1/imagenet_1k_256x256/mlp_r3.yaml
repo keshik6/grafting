@@ -1,0 +1,47 @@
+operator:
+  name: "mlp"
+  config_filepath: configs/operators/mha/mha_timm.yaml
+
+# Train config
+train_config:
+  initial_learning_rate: 1e-3
+  min_learning_rate: 1e-6
+  wd: 1e-5
+  epochs: 200
+  global_seed: 0
+  clip_norm_val: 10.0
+
+
+# Dataset
+train:
+  tar_dir: /data/scion_fts_mlp/train/
+  tar_str_indexes: split_{000..007}.tar
+  num_workers: 8 # Each worker will handle 1 tar.
+  num_samples: 8000  # This should be num_workers*num_samples_per_class*total_classes (which is 1000 for ImageNet-1K)
+  batch_size: 8
+  # selected_image_paths_file: None
+  train_subset: False
+  return_tuple_keys:
+  - __key__
+  - fc1_in_fts.pth
+  - fc2_out_fts.pth
+  - adaln_out_fts.pth
+  sha_key: None
+
+
+val:
+  #tar_dir: /atlas/u/keshik/workspace/data/scion_fts_mlp/val/
+  tar_dir: /data/scion_fts_mlp/val/
+  tar_str_indexes: split_{000..007}.tar
+  num_workers: 8 # Each worker will handle 1 tar
+  num_samples: 8000  # This should be num_workers*num_samples_per_class*total_classes (which is 1000 for ImageNet-1K)
+  batch_size: 64
+  train_subset: False
+  # selected_image_paths_file: assets/imagenet/splits/hash_key_50k_set_val_256_image_paths.pkl
+  return_tuple_keys:
+  - __key__
+  - fc1_in_fts.pth
+  - fc2_out_fts.pth
+  - adaln_out_fts.pth
+  sha_key: None
+

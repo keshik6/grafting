@@ -2,11 +2,6 @@
 # https://github.com/facebookresearch/DiT
 # https://github.com/chuanyangjin/fast-DiT
 
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
-
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
 
 """
 Sample new images from a pre-trained DiT.
@@ -18,7 +13,6 @@ from torchvision.utils import save_image
 from diffusion import create_diffusion
 from diffusers.models import AutoencoderKL
 import argparse
-from torchsummary import summary
 
 from utils import *
 from itertools import islice

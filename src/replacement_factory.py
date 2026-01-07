@@ -1,5 +1,6 @@
+# Grafting Diffusion Transformers (NeurIPS 2025 Oral)
 # Authors: Keshik, Michael
-# https://arxiv.org/abs/2503.01868?.
+# https://grafting.stanford.edu
 
 # Import base libraries
 import os, sys

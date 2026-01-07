@@ -1,0 +1,23 @@
+operator:
+  type: 'mha'
+  name: "hyena_y"
+  config_filepath: configs/sequence_mixers/hyena_y.yaml
+
+
+sample_config:
+  init_type: graft
+  global_seed: 0
+  dit_model_name: DiT-XL/2
+  grafted_dit_ckpt_path: None
+  samples_save_dir: ./results/demo_stage1/hyena_y_256k_data/
+  image_size: 256
+  graft_indexes:
+    - 6
+    - 16
+    - 27
+  
+  # We can skip these weights as it will be overwritten by grafted_dit_ckpt_path
+  graft_weights:
+    - 6: "./results/stage1/hyena_y/block_6/l1/scaled_pred=False/seed=6/checkpoints/best_train.pt"
+    - 16: "./results/stage1/hyena_y/block_16/l1/scaled_pred=False/seed=16/checkpoints/best_train.pt"
+    - 27: "./results/stage1/hyena_y/block_27/l1/scaled_pred=False/seed=27/checkpoints/best_train.pt"
