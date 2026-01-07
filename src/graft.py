@@ -1,5 +1,7 @@
+# Grafting Diffusion Transformers (NeurIPS 2025 Oral)
 # Authors: Keshik
-# Minimal code for creating grafts proposed in https://arxiv.org/abs/2506.05340
+# https://grafting.stanford.edu
+
 import copy
 from replacement_factory import ReplacementFactory
 import torch

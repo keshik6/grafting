@@ -196,3 +196,7 @@ cython_debug/
 pretrained_models/
 grafted_models/
 check*.txt
+wandb/
+samples*
+results*
+logs*

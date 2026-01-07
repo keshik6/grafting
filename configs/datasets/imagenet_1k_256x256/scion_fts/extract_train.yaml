@@ -1,0 +1,16 @@
+tar_dir: /data/vae_features/imagenet_256/train/
+num_workers: 1 # 1 worker will handle 1 tar (Please pay attention to this.)
+num_samples_per_class: 1 #8
+num_samples: 1000  # This should be num_workers*num_samples_per_class*total_classes (which is 1000 for ImageNet-1K)
+batch_size: 1024
+train_scions: False
+split: train
+selected_image_paths_file: None # train scions= False
+return_tuple_keys:
+# - __key__
+- latent.pth
+- label.pth
+- class_name
+- human_readable_class_name
+- image_path
+sha_key: None
