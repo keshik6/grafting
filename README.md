@@ -91,9 +91,11 @@ This guide describes the complete training pipeline for grafting on the ImageNet
 
 #### 1.1 Setup Environment
 - Build Docker image: `docker build -t grafting .`
-- (Optional) Create a persistent cache volume for downloading Hugging Face models: `docker volume create huggingface_cache`
+- (Optional) Create a persistent cache volume for downloading Hugging Face models:
+  `docker volume create huggingface_cache`
 
-- Run container (An example shown below):  
+- Run container (An example shown below):
+  
   `docker run --gpus all --ipc=host --ulimit memlock=-1 --ulimit stack=67108864 -v ~/keshik/workspace/projects/grafting:/workspace -v huggingface_cache:/home/user/.cache/huggingface -v ~/keshik/data:/data -it grafting /bin/bash`
 
 ---
@@ -101,12 +103,14 @@ This guide describes the complete training pipeline for grafting on the ImageNet
 #### 1.2 Extract VAE Latents (Full ImageNet-1K)
 - Download ImageNet-1K dataset from [here](https://www.image-net.org/download.php). 
 
-- Extract SD-VAE features for the ImageNet-1K dataset at 256×256:  
+- Extract SD-VAE features for the ImageNet-1K dataset at 256×256:
+  
   `bash bash_scripts/imagenet_1k/extract_vae_fts.sh`
 
 - Expected output directory created: `/data/vae_features/imagenet_256/train/`
 
 - Generates a stratified 128k ImageNet-1K subset (10% used in the paper) and saves image paths + SHA hash so the exact subset can be used across different experiments. This can be increased up to the full ImageNet size if required.
+  
   `bash bash_scripts/dit_imagenet_1k_256x256/generate_dataset_hash.sh`
 
 ⚡Recommended 1× H100
@@ -117,6 +121,7 @@ This guide describes the complete training pipeline for grafting on the ImageNet
 
 #### 1.3 Extract DiT Block Activations (for Activation Distillation)
 - Stage-1 requires intermediate DiT-XL/2 activations:
+  
   `bash bash_scripts/dit_imagenet_1k_256x256/extract_mha_scion_fts.sh`
 
 - Inside the script, users must manually set:
@@ -140,12 +145,13 @@ This guide describes the complete training pipeline for grafting on the ImageNet
 ### 2) Grafting Stage 1: Activation Distillation
 
 - Train replacement attention/MLP operators by distilling the extracted activations:
-
+  
   `bash bash_scripts/dit_imagenet_1k_256x256/train_stage1.sh`
 
 - Stage-1 trained operator checkpoints are saved under: `./results/`
 
-- Optional post Stage-1 sampling:  
+- Optional post Stage-1 sampling:
+  
   `bash bash_scripts/dit_imagenet_1k_256x256/sample_stage1.sh`
 
 ⚡Recommended 1× H100 (You can run this in parallel for different layers)
@@ -155,6 +161,7 @@ This guide describes the complete training pipeline for grafting on the ImageNet
 ### 3) Grafting Stage 2: Lightweight Fine-Tuning
 
 - Perform end-to-end fine-tuning after activation distillation:
+  
   `bash bash_scripts/dit_imagenet_1k_256x256/train_stage2.sh`
 
 - Stage-1 trained operator checkpoints are saved under: `./results/`
@@ -166,7 +173,7 @@ This guide describes the complete training pipeline for grafting on the ImageNet
 ### 4) Sampling & FID Evaluation
 
 - Generate samples from the fine-tuned model and save as `.npz`:
-
+  
   `bash bash_scripts/dit_imagenet_1k_256x256/sample_stage2.sh`
 
 - Then compute FID using OpenAI’s reference batch.Frist, install dependencies using the official [`requirements.txt`](https://github.com/openai/guided-diffusion/blob/main/evaluations/requirements.txt), or use the Dockerfile at `assets/tf_Dockerfile/Dockerfile` for evaluation. Then run the following:
